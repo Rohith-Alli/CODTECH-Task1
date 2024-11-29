@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChocoSphere</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Helvetica Neue', sans-serif;
+            background-color: #3e2723;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        header {
+            background-color: #3e2723;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-image: url("background.jpeg");
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        header h1 {
+            font-family: 'Copperplate', 'Papyrus', fantasy;
+            font-size: 3.5em;
+            color: #f1f1f1;
+            letter-spacing: 3px;
+            animation: fadeIn 2s ease-out;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        nav ul li a {
+            color: #f1f1f1;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #ff9f43;
+        }
+
+        .cart-button {
+            background-color: #ff9f43;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: background-color 0.3s;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .cart-button:hover {
+            background-color: #e64946;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .home {
+            background: url('chocolate-background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .home h2 {
+            font-size: 4rem;
+            font-family: 'Copperplate', 'Papyrus', fantasy;
+            letter-spacing: 4px;
+        }
+
+        .home button {
+            padding: 15px 30px;
+            background-color: #ff9f43;
+            color: #fff;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .home button:hover {
+            background-color: #e64946;
+        }
+
+        .shop-page {
+            padding: 50px 5%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            background: linear-gradient(135deg, #3e2723, #8d6e63, #ff9f43);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .chocolate-item {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+        .chocolate-item img {
+            max-width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .chocolate-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+        }
+
+        .chocolate-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .chocolate-item h3 {
+            font-size: 1.5em;
+            margin: 10px 0;
+            color: #3e2723;
+        }
+
+        .chocolate-item p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .price {
+            font-size: 18px;
+            color: #ff9f43;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .chocolate-item button {
+            padding: 10px 20px;
+            background-color: #ff6f1f;
+            color: #fff;
+            font-size: 16px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .chocolate-item button:hover {
+            background-color: #e64946;
+        }
+
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cart-modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .cart-modal-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .cart-modal-content li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-modal-content .total-price {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .close-button,
+        .checkout-button {
+            background-color: #e64946;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-button:hover,
+        .checkout-button:hover {
+            background-color: #ff9f43;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            nav ul li {
+                margin: 8px;
+                font-size: 1rem;
+            }
+
+            .cart-button {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            .shop-page {
+                grid-template-columns: 1fr 1fr;
+                padding: 20px 5%;
+            }
+
+            .home h2 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            nav ul {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            nav ul li {
+                margin: 5px;
+                font-size: 0.9rem;
+            }
+
+            .cart-button {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+
+
+            .shop-page {
+                grid-template-columns: 1fr;
+                padding: 10px 5%;
+            }
+
+            .home h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>ChocoSphere</h1>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="feedback.html">Feedback</a></li>
+            </ul>
+        </nav>
+        <button class="cart-button" id="cartButton" onclick="toggleCart()">Cart (<span id="cartCount">0</span>)</button>
+    </header>
+    
+    <div class="shop-page">
+        <div class="chocolate-item">
+            <img src="big1.jpeg" alt="Chocolate">
+            <h3>A Neuhaus Milk, Dark & White Collection 24pc, 266g</h3>
+            <p class="price">₹6,499</p>
+            <button onclick="addToCart('A Neuhaus Milk, Dark & White Collection ', 6499)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="big3.jpeg" alt="Chocolate">
+            <h3>Hershey’s Kisses Milk Chocolate, 306g</h3>
+            <p class="price">₹1,195</p>
+            <button onclick="addToCart('Hershey’s Kisses Milk Chocolate ', 1195)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="big4.jpeg" alt="Chocolate">
+            <h3>Guylian Premium Assortment Belgian Chocolate Giftbox,417g</h3>
+            <p class="price">₹3,995</p>
+            <button onclick="addToCart('Guylian Premium Assortment Belgian Chocolate Giftbox ', 3996)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="big5.jpeg" alt="Chocolate">
+            <h3>Valrhona Premium French Baking Dark Chocolate Discs Feves</h3>
+            <p class="price">₹2,363</p>
+            <button onclick="addToCart('Valrhona Premium French Baking Dark Chocolate Discs Feves', 2363)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="big6.jpeg" alt="Chocolate">
+            <h3>Amedei Porcelana Venezuela 70% Dark Chocolate Bar</h3>
+            <p class="price">₹2,200</p>
+            <button onclick="addToCart('Amedei Porcelana Venezuela 70% Dark Chocolate Bar', 2200)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="big7.jpeg" alt="Chocolate">
+            <h3>Patchi Assorted Chocolate Gift Box,500g</h3>
+            <p class="price">₹5,300</p>
+            <button onclick="addToCart('Patchi Assorted Chocolate Gift Box', 5300)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="big8.jpeg" alt="Chocolate">
+            <h3>Callebaut Ruby RB2 Chocolate 2.5 Kg</h3>
+            <p class="price">₹7,000</p>
+            <button onclick="addToCart('Callebaut Ruby RB2 Chocolate', 7000)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="big9.jpeg" alt="Chocolate">
+            <h3>Merci Finest Selection Milk Chocolate,250g</h3>
+            <p class="price">₹1,299</p>
+            <button onclick="addToCart('Merci Finest Selection Milk Chocolate', 1299)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="big10.jpeg" alt="Chocolate">
+            <h3>Butlers Hot Chocolate Box,240g</h3>
+            <p class="price">₹1,495</p>
+            <button onclick="addToCart('Butlers Hot Chocolate Box', 1495)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco1.jpeg" alt="Chocolate">
+            <h3>Lindt Swiss Luxury Finest Selection Of Dark, Milk & White Chocolate Pralines, 195Gram</h3>
+            <p class="price">₹1,650</p>
+            <button onclick="addToCart('Lindt Swiss Luxury Finest', 1650)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco2.jpeg" alt="Chocolate">
+            <h3>Winni - Premium Chocolate | Chocolate Gift Packs - Valentine Gift For Girls</h3>
+            <p class="price">₹1,099</p>
+            <button onclick="addToCart('Winni - Premium Chocolate', 1099)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco3.jpeg" alt="Chocolate">
+            <h3>Fabelle The Bars Quartet - Chocolate Pack, 4 Assorted Luxury Chocolate Bars, 519g</h3>
+            <p class="price">₹1,172</p>
+            <button onclick="addToCart('Fabelle The Bars Quartet', 1172)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco4.jpeg" alt="Chocolate">
+            <h3>Ferrero Rocher T-24 Pieces Pack Of 2 300 Gram Each - Chocolate, Hazelnut</h3>
+            <p class="price">₹1,853</p>
+            <button onclick="addToCart('Ferrero Rocher', 1853)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco5.jpeg" alt="Chocolate">
+            <h3>Chokola Cosmos Chocolates, 400g</h3>
+            <p class="price">₹1,950</p>
+            <button onclick="addToCart('Chokola Cosmos Chocolates', 1950)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco6.jpeg" alt="Chocolate">
+            <h3>KOKOMAE Artisanal Chocolate, 50g</h3>
+            <p class="price">₹1,595</p>
+            <button onclick="addToCart('KOKOMAE Artisanal Chocolate', 1595)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco7.jpeg" alt="Chocolate">
+            <h3>Galaxy Jewels Assorted Chocolate Gift Box, 400g</h3>
+            <p class="price">₹1,893</p>
+            <button onclick="addToCart('Galaxy Jewels Assorted Chocolate', 1893)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco8.jpeg" alt="Chocolate">
+            <h3>Godiva Dark 72% Bar, 90g</h3>
+            <p class="price">₹699</p>
+            <button onclick="addToCart('Godiva Dark 72% Bar 90g', 699)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco9.jpeg" alt="Chocolate">
+            <h3>Fabelle Milk Gianduja,140g</h3>
+            <p class="price">₹1,145</p>
+            <button onclick="addToCart('Fabelle Milk Gianduja', 1145)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco10.jpeg" alt="Chocolate">
+            <h3>MBDH Wellness Ignite Chocolate Bars,120g</h3>
+            <p class="price">₹799</p>
+            <button onclick="addToCart('MBDH Wellness Ignite Chocolate Bars', 799)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco11.jpeg" alt="Chocolate">
+            <h3>Hershey's Nuggets Extra Creamy Milk Chocolate With Cookie Bits,344g</h3>
+            <p class="price">₹1,095</p>
+            <button onclick="addToCart('Hersheys Nuggets', 1095)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco12.jpeg" alt="Chocolate">
+            <h3>Cadbury Dairy Milk Chocolate Bar,180g</h3>
+            <p class="price">₹594</p>
+            <button onclick="addToCart('Cadbury Dairy Milk Chocolate Bar', 594)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco13.jpeg" alt="Chocolate">
+            <h3>Rhine Valley Handcrafted Classics Dark Chocolate,275g</h3>
+            <p class="price">₹1,496</p>
+            <button onclick="addToCart('Rhine Valley Handcrafted Classics Dark Chocolate', 1496)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco14.jpeg" alt="Chocolate">
+            <h3>Lindt Gold Tab Milk Almond Chocolate,300g</h3>
+            <p class="price">₹1,249</p>
+            <button onclick="addToCart('Lindt Gold Tab Milk Almond Chocolate', 1249)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco15.jpeg" alt="Chocolate">
+            <h3>Neuhaus Dark Orange ,100g Bar</h3>
+            <p class="price">₹995</p>
+            <button onclick="addToCart('Neuhaus Dark Orange', 995)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco16.jpeg" alt="Chocolate">
+            <h3>Venchi Milk Chocolate Hazelnut -70% Sugars Bar,100g</h3>
+            <p class="price">₹899</p>
+            <button onclick="addToCart('Venchi Milk Chocolate Hazelnut -70% Sugar', 899)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco17.jpeg" alt="Chocolate">
+            <h3>Leonidas Dark 70% Cocoa African Origins Bar,100g</h3>
+            <p class="price">₹695</p>
+            <button onclick="addToCart('Leonidas Dark 70% Cocoa African Origins Bar', 695)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco18.jpeg" alt="Chocolate">
+            <h3>Neuhaus Milk 35% Cocoa 100g Bar</h3>
+            <p class="price">₹995</p>
+            <button onclick="addToCart('Neuhaus Milk 35% Cocoa ', 995)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="big2.jpeg" alt="Chocolate">
+            <h3>Neuhaus Milk Dark White Collection 12pc,141g</h3>
+            <p class="price">₹3,899</p>
+            <button onclick="addToCart('Neuhaus Milk Dark White Collection', 3899)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco19.jpeg" alt="Chocolate">
+            <h3>BarkThins Dark Chacolate-Almonds&sea salt,133g</h3>
+            <p class="price">₹695</p>
+            <button onclick="addToCart('BarkThins Dark Chacolate-Almonds&sea salt,', 695)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco20.jpeg" alt="Chocolate">
+            <h3>Feastables Mr. Beast Bar Chocolate Bar, 60g</h3>
+            <p class="price">₹700</p>
+            <button onclick="addToCart('Feastables Mr. Beast Bar Chocolate Bar', 700)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco21.jpeg" alt="Chocolate">
+            <h3>Toblerone international white chacolate bar,360g</h3>
+            <p class="price">₹1,200</p>
+            <button onclick="addToCart('Toblerone international white chacolate bar', 1200)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco22.jpeg" alt="Chocolate">
+            <h3>Cocoacraft 99.5% Bitter Dark Chocolate Bar,80g</h3>
+            <p class="price">₹300</p>
+            <button onclick="addToCart('Cocoacraft 99.5% Bitter Dark Chocolate Bar', 300)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco23.jpeg" alt="Chocolate">
+            <h3>Pick & Mix : Lindor Hazelnut</h3>
+            <p class="price">₹424</p>
+            <button onclick="addToCart('Pick & Mix : Lindor Hazelnut', 424)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco24.jpeg" alt="Chocolate">
+            <h3>Rhine Valley Milk Hazelnut,100g</h3>
+            <p class="price">₹500</p>
+            <button onclick="addToCart('Rhine Valley Milk Hazelnut', 500)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco25.jpeg" alt="Chocolate">
+            <h3>Jules Destrooper Belgian Chocolate Thins,100g</h3>
+            <p class="price">₹599</p>
+            <button onclick="addToCart('Jules Destrooper Belgian Chocolate Thins', 599)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco26.jpeg" alt="Chocolate">
+            <h3>St Michel Brownies White Chocolate,210g</h3>
+            <p class="price">₹400</p>
+            <button onclick="addToCart('St Michel Brownies White Chocolate', 400)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco27.jpeg" alt="Chocolate">
+            <h3>Ray No Sugar Chocolate Couverture Hazelnut,90g</h3>
+            <p class="price">₹599</p>
+            <button onclick="addToCart('Ray No Sugar Chocolate Couverture Hazelnut', 599)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco28.jpeg" alt="Chocolate">
+            <h3>Chocodate Exclusive Real Milk Pouch,100g</h3>
+            <p class="price">₹699</p>
+            <button onclick="addToCart('Chocodate Exclusive Real Milk Pouch', 699)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco29.jpeg" alt="Chocolate">
+            <h3>Villars Swiss 33% Milk Chocolate Bar,100g</h3>
+            <p class="price">₹549</p>
+            <button onclick="addToCart('Villars Swiss 33% Milk Chocolate Bar', 549)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco30.jpeg" alt="Chocolate">
+            <h3>Wedel Milk Chocolate Bar,90g</h3>
+            <p class="price">₹450</p>
+            <button onclick="addToCart('Wedel Milk Chocolate Bar,90g', 450)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco31.jpeg" alt="Chocolate">
+            <h3>Whittaker's White Bar,50g</h3>
+            <p class="price">₹239</p>
+            <button onclick="addToCart('Whittakers White Bar,50g', 239)">Add to Cart</button>
+        </div>
+        <div class="chocolate-item">
+            <img src="chaco32.jpeg" alt="Chocolate">
+            <h3>Ray No Sugar Belgian White Chocolate Crackle,90gm</h3>
+            <p class="price">₹599</p>
+            <button onclick="addToCart('Ray No Sugar Belgian White Chocolate Crackle', 599)">Add to Cart</button>
+        </div>
+    </div>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-modal-content">
+            <h2>Your Cart</h2>
+            <ul id="cartItems"></ul>
+            <p class="total-price">Total: ₹0</p>
+            <button class="checkout-button" onclick="checkout()">Checkout</button>
+            <button class="close-button" onclick="toggleCart()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function addToCart(itemName, price) {
+            cart.push({ name: itemName, price: price });
+            updateCart();
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function updateCart() {
+            const cartCount = document.getElementById('cartCount');
+            const cartItems = document.getElementById('cartItems');
+            const totalPriceElement = document.querySelector('.total-price');
+
+            cartCount.textContent = cart.length;
+            cartItems.innerHTML = '';
+
+            let total = 0;
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.name} - ₹${item.price}`;
+                cartItems.appendChild(li);
+                total += item.price;
+            });
+
+            totalPriceElement.textContent = `Total: ₹${total}`;
+        }
+
+        function toggleCart() {
+            const cartModal = document.getElementById('cartModal');
+            cartModal.style.display = cartModal.style.display === 'none' || !cartModal.style.display ? 'flex' : 'none';
+        }
+
+        function checkout() {
+            const cartModal = document.getElementById('cartModal');
+            cartModal.style.display = 'none';
+
+            const thankYouMessage = document.createElement('div');
+            thankYouMessage.classList.add('thank-you-message');
+            thankYouMessage.textContent = 'Thank you for shopping with Chocolate Haven!';
+            document.body.appendChild(thankYouMessage);
+
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+
+            setTimeout(function() {
+                window.location.href = 'shop.html';
+            }, 3000);
+        }
+
+        window.onload = updateCart;
+    </script>
+</body>
+
+</html>
